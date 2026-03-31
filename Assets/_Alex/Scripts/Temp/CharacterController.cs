@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 public class CharacterController : MonoBehaviour
 {
     // exclusivo de jugador
@@ -18,7 +19,8 @@ public class CharacterController : MonoBehaviour
     public GameObject camTgt;
     public GameObject camAnchor;
         
-    public float t;
+    public float camT;
+    public float charT;
     
     public float lowerLimitV, upperLimitV;
 
@@ -28,7 +30,7 @@ public class CharacterController : MonoBehaviour
     private InputAction _charJump;
     private InputAction _charLook;
 
-    private Vector2 _move;
+    private Vector3 _move;
     private Vector2 _look;
     
     #endregion
@@ -61,8 +63,10 @@ public class CharacterController : MonoBehaviour
 
     void Start()
     {
+        // Inicializa la vida del personaje (no compatible con persistencia entre escenas).
         health = maxHealth;
 
+        // Automáticamente asigna la MainCamera de la escena si no se ha asignado una manualmente.
         if (cam == null)
             cam = Camera.main;
 
@@ -71,16 +75,23 @@ public class CharacterController : MonoBehaviour
     void Update()
     {
         // Controls();
-        Movement();
+        // Movement();
         CameraControl();
         
         if (gotDmg)
             AlterHealth(dmg);
         
     }
-    
+
+    private void FixedUpdate()
+    {
+        MovementRB();
+        
+    }
+
     #endregion
     
+    // Contiene todas las funciones llamadas por el sistema de eventos de PlayerInput.
     #region INPUT_EVENTS
 
     /*public void Controls(InputAction.CallbackContext context)
@@ -93,6 +104,9 @@ public class CharacterController : MonoBehaviour
         
     }*/
     
+    /// <summary>
+    /// Registro de entrada de control de salto (Input System)
+    /// </summary>
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -100,12 +114,19 @@ public class CharacterController : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Registro de entrada de controles de desplazamiento (Input System)
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
-        _move = context.ReadValue<Vector2>();
+        Vector2 moveInput = context.ReadValue<Vector2>();
+        _move = new Vector3(moveInput.x, 0, moveInput.y);
         
     }
 
+    /// <summary>
+    /// Registro de entrada de controles de cámara (Input System)
+    /// </summary>
     public void OnLook(InputAction.CallbackContext context)
     {
         _look = context.ReadValue<Vector2>();
@@ -114,9 +135,14 @@ public class CharacterController : MonoBehaviour
     
     #endregion
 
-    public void AlterHealth(float healthChange)
+    /// <summary>
+    /// Modifica el valor de vida del personaje.
+    /// </summary>
+    /// <param name="healthChange">Valor para modificar la vida.</param>
+    /// <param name="isHealing">Define si "healthChange" es daño o curación (default: daño).</param>
+    public void AlterHealth(float healthChange, bool isHealing = false)
     {
-        health += healthChange;
+        health += healthChange * (isHealing ? 1 : -1);
         
     }
     
@@ -156,6 +182,19 @@ public class CharacterController : MonoBehaviour
         transform.forward = Vector3.Slerp(transform.forward, camFwd, 0.05f);
         
     }
+    
+    public void MovementRB()
+    {
+        Vector3 camFwd = cam.transform.forward;
+        camFwd.y = 0;
+
+        Vector3 movement = transform.TransformDirection(_move) * walkSpeed;
+        
+        rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
+        
+        transform.forward = Vector3.Slerp(transform.forward, camFwd, charT);
+        
+    }
 
     /*private void Movement()
     {
@@ -184,7 +223,7 @@ public class CharacterController : MonoBehaviour
         _rotation.y = Mathf.Clamp(_rotation.y, lowerLimitV, upperLimitV);
         
         cam.transform.position = Vector3.Lerp(cam.transform.position, camAnchor.transform.position, 
-            Mathf.SmoothStep(0, 1, t));
+            Mathf.SmoothStep(0, 1, camT));
 
         camTgt.transform.eulerAngles = new Vector3(_rotation.y, _rotation.x, 0);
         

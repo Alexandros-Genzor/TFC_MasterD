@@ -764,7 +764,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 76a8930035b9a0a499c12f776a1a47c5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -861,7 +861,8 @@ MonoBehaviour:
   camOffset: {x: 0, y: 0, z: -3}
   camTgt: {fileID: 295333736}
   camAnchor: {fileID: 512536962}
-  t: 0.2
+  camT: 0.2
+  charT: 0.2
   lowerLimitV: -45
   upperLimitV: 60
   playerIn: {fileID: 0}
@@ -947,18 +948,6 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: d61c5bf1-6693-45bd-8c76-b4f3beddb976
     m_ActionName: Player/Look[/Mouse/delta]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 207ba6f6-a647-4379-ad08-f73357df817a
-    m_ActionName: Player (ALT)/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow,/XInputControllerWindows/leftStick]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 46c36401-3d8e-4280-a714-6f79e3efe783
-    m_ActionName: Player (ALT)/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: ad4fdae4-a9cd-4240-be9d-13706a48e4e8
-    m_ActionName: Player (ALT)/Look[/Mouse/delta,/XInputControllerWindows/rightStick]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard
   m_DefaultActionMap: Player
@@ -989,7 +978,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
