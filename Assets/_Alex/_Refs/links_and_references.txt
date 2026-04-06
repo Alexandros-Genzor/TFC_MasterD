@@ -3,3 +3,6 @@ https://youtu.be/ZSP3bFaZm-o
 
 - tutorial shader grid procedural
 https://youtu.be/T0CYpOyCVIU
+
+- tutorial object movement types (con rigidbody)
+https://youtu.be/EMhTROG0nAw

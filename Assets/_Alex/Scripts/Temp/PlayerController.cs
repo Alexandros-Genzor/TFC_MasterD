@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class CharacterController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     // exclusivo de jugador
     #region PLAYER_ONLY
@@ -39,6 +39,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     
     public float walkSpeed;
+    public float acceleration;
     public float jumpForce = 10;
     
     public float minHealth = 0, maxHealth = 100;
@@ -50,14 +51,11 @@ public class CharacterController : MonoBehaviour
     
     #region LIFECYCLE FUNC
 
+    // asignación de componentes (que no vayan a ser añadidos / eliminados en runtime) y que serán usados en código.
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         playerIn = GetComponent<PlayerInput>();
-        
-        // _charMove  = playerIn.actions.FindAction("Move");
-        // _charJump  = playerIn.actions.FindAction("Jump");
-        // _charLook  = playerIn.actions.FindAction("Look");
         
     }
 
@@ -77,7 +75,7 @@ public class CharacterController : MonoBehaviour
         // Controls();
         // Movement();
         CameraControl();
-        
+
         if (gotDmg)
             AlterHealth(dmg);
         
@@ -85,7 +83,7 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MovementRB();
+        Movement();
         
     }
 
@@ -94,15 +92,29 @@ public class CharacterController : MonoBehaviour
     // Contiene todas las funciones llamadas por el sistema de eventos de PlayerInput.
     #region INPUT_EVENTS
 
-    /*public void Controls(InputAction.CallbackContext context)
+    // para uso con eventos por c# de PlayerInput
+    public void Controls(InputAction.CallbackContext context)
     {
         switch (context.action.name)
         {
             case "Move":
+                OnMove(context);
+                
+                break;
+            
+            case "Jump":
+                OnJump(context);
+                
+                break;
+            
+            case "Look":
+                OnLook(context);
+                
+                break;
             
         }
         
-    }*/
+    }
     
     /// <summary>
     /// Registro de entrada de control de salto (Input System)
@@ -111,6 +123,7 @@ public class CharacterController : MonoBehaviour
     {
         if (context.started)
             rb.AddForce(0, /*Vector3.up * */jumpForce, 0, ForceMode.Impulse);
+            // rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         
     }
 
@@ -163,7 +176,8 @@ public class CharacterController : MonoBehaviour
         
     }*/
     
-    public void Movement()
+    // sistema de movimiento mediante transform / sin uso de rigidbody ni físicas
+    /*public void Movement()
     {
         Vector3 camFwd = cam.transform.forward;
         camFwd.y = 0;
@@ -181,16 +195,30 @@ public class CharacterController : MonoBehaviour
 
         transform.forward = Vector3.Slerp(transform.forward, camFwd, 0.05f);
         
-    }
+    }*/
     
-    public void MovementRB()
+    public void Movement()
     {
+        Debug.Log(rb.velocity);
+        
         Vector3 camFwd = cam.transform.forward;
         camFwd.y = 0;
 
-        Vector3 movement = transform.TransformDirection(_move) * walkSpeed;
+        // Vector3 movement = transform.TransformDirection(_move) * acceleration;
+        Vector3 movement = transform.TransformDirection(_move);
         
-        rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
+        // rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z); // controla el movimiento del personaje atacando directamente a la velocidad del rigidbody
+        
+        // controla el movimiento del personaje a base de ejercer una aceleración en la direccion del personaje (+ clamp de velocidad)
+        if (_move != Vector3.zero)
+        {
+            rb.AddForce(movement * acceleration, ForceMode.Force);
+            rb.velocity = Vector3.ClampMagnitude(new Vector3(rb.velocity.x, 0, rb.velocity.z), walkSpeed) + 
+                          new Vector3(0, rb.velocity.y, 0); // !IMPORTANT! -> clamp de velocidad horizontal, manteniendo caída con gravedad
+            
+        }
+        else
+            rb.AddForce(new Vector3(rb.velocity.x, 0, rb.velocity.z) * -acceleration, ForceMode.Force);
         
         transform.forward = Vector3.Slerp(transform.forward, camFwd, charT);
         
