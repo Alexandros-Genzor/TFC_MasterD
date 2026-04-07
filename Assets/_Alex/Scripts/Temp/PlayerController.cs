@@ -32,6 +32,9 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 _move;
     private Vector2 _look;
+
+    [SerializeField] private GameObject sword;
+    private bool isAttacking;
     
     #endregion
 
@@ -47,7 +50,7 @@ public class PlayerController : MonoBehaviour
     public float Health {get => health; set => health = Mathf.Clamp(value, minHealth, maxHealth);}
     // temp
     public bool gotDmg = false;
-    public float dmg = -10; // temporal
+    public float dmg = 10; // temporal
     
     #region LIFECYCLE FUNC
 
@@ -76,8 +79,16 @@ public class PlayerController : MonoBehaviour
         // Movement();
         CameraControl();
 
+        // puede que sea redundante :/
         if (gotDmg)
+        {
             AlterHealth(dmg);
+            gotDmg = false;
+
+        }
+        
+        if (health <= 0)
+            gameObject.SetActive(false);
         
     }
 
@@ -109,6 +120,11 @@ public class PlayerController : MonoBehaviour
             
             case "Look":
                 OnLook(context);
+                
+                break;
+            
+            case "Attack":
+                OnAttack(context);
                 
                 break;
             
@@ -145,9 +161,36 @@ public class PlayerController : MonoBehaviour
         _look = context.ReadValue<Vector2>();
         
     }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            // para evitar cualquier posible overlap
+            if (isAttacking)
+                StopCoroutine(nameof(IAttack));
+
+            StartCoroutine(nameof(IAttack));
+
+        }
+        
+    }
     
     #endregion
 
+    IEnumerator IAttack()
+    {
+        Debug.Log("STARTED");
+        
+        sword.SetActive(true);
+        isAttacking = true;
+        yield return new WaitForSeconds(2);
+        sword.SetActive(false);
+        isAttacking = false;
+
+    }
+
+    // mover a clase padre (cuando se haga la clase padre)
     /// <summary>
     /// Modifica el valor de vida del personaje.
     /// </summary>
