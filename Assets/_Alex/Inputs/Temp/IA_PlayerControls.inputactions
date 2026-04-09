@@ -29,7 +29,7 @@
                     "type": "PassThrough",
                     "id": "d61c5bf1-6693-45bd-8c76-b4f3beddb976",
                     "expectedControlType": "Vector2",
-                    "processors": "",
+                    "processors": "InvertVector2(invertX=false)",
                     "interactions": "",
                     "initialStateCheck": false
                 },
@@ -37,6 +37,15 @@
                     "name": "Attack",
                     "type": "Button",
                     "id": "355b8e6b-46c4-45c5-a342-52c7944abb64",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Knockback",
+                    "type": "Button",
+                    "id": "af341cb3-a67d-4fc3-884a-14d165106fed",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -203,7 +212,7 @@
                     "id": "c14a046e-a019-4cf5-92c8-f6fe01326b8b",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2",
                     "groups": ";Controller",
                     "action": "Look",
                     "isComposite": false,
@@ -228,6 +237,17 @@
                     "processors": "",
                     "groups": ";Controller",
                     "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b8d89b02-aa2a-44cb-9e06-4a07b9898034",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard;Keyboard (ALT)",
+                    "action": "Knockback",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

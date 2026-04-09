@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
     #region PLAYER_ONLY
     public Camera cam;
     public float camSensitivity;
-    public Vector3 camOffset;
+    public float camGamepadMult = 3; // multiplicador de sensibilidad de la cámara con joystick
+    public Vector3 camOffset; // aplica un offset de distancia al ancla de la cámara respecto al eje (si se usa provoca que la cámara se atasque).
 
     private Vector2 _rotation;
 
@@ -33,6 +34,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _move;
     private Vector2 _look;
 
+    // temporal
     [SerializeField] private GameObject sword;
     private bool isAttacking;
     
@@ -42,7 +44,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     
     public float walkSpeed;
-    public float acceleration;
+    public float deceleration;
     public float jumpForce = 10;
     
     public float minHealth = 0, maxHealth = 100;
@@ -175,6 +177,13 @@ public class PlayerController : MonoBehaviour
         }
         
     }
+
+    public void OnTestKnockback(InputAction.CallbackContext context)
+    {
+        if (context.started)
+            rb.AddForce(-transform.forward * 8, ForceMode.Impulse);
+        
+    }
     
     #endregion
 
@@ -202,7 +211,7 @@ public class PlayerController : MonoBehaviour
         
     }
     
-    
+    // sistema de movimiento mediante transform / sin uso de rigidbody ni físicas
     /*public void Movement()
     {
         Vector3 camFwd = cam.transform.forward;
@@ -219,70 +228,33 @@ public class PlayerController : MonoBehaviour
         
     }*/
     
-    // sistema de movimiento mediante transform / sin uso de rigidbody ni físicas
-    /*public void Movement()
-    {
-        Vector3 camFwd = cam.transform.forward;
-        camFwd.y = 0;
-        
-        // Vector2 input = _charMove.ReadValue<Vector2>();
-
-        // Vector3 fwd = (transform.forward * input.y);
-        // Vector3 rgt = (transform.right * input.x);
-        
-        // Vector3 movement = (transform.forward * input.y + transform.right * input.x);
-        Vector3 movement = (transform.forward * _move.y + transform.right * _move.x);
-        
-        // transform.position += (fwd + rgt) * walkSpeed * Time.deltaTime;
-        transform.position += movement * walkSpeed * Time.deltaTime;
-
-        transform.forward = Vector3.Slerp(transform.forward, camFwd, 0.05f);
-        
-    }*/
-    
     public void Movement()
     {
-        Debug.Log(rb.velocity);
-        
         Vector3 camFwd = cam.transform.forward;
         camFwd.y = 0;
 
         // Vector3 movement = transform.TransformDirection(_move) * acceleration;
-        Vector3 movement = transform.TransformDirection(_move);
+        Vector3 movement = transform.TransformDirection(_move) * walkSpeed;
         
         // rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z); // controla el movimiento del personaje atacando directamente a la velocidad del rigidbody
         
         // controla el movimiento del personaje a base de ejercer una aceleración en la direccion del personaje (+ clamp de velocidad)
         if (_move != Vector3.zero)
         {
-            rb.AddForce(movement * acceleration, ForceMode.Force);
-            rb.velocity = Vector3.ClampMagnitude(new Vector3(rb.velocity.x, 0, rb.velocity.z), walkSpeed) + 
-                          new Vector3(0, rb.velocity.y, 0); // !IMPORTANT! -> clamp de velocidad horizontal, manteniendo caída con gravedad
+            // rb.AddForce(movement * acceleration, ForceMode.Force);
+            // rb.velocity = Vector3.ClampMagnitude(RbVelocityHorizontal(), walkSpeed) + RbVelocityVertical(); // !IMPORTANT! -> clamp de velocidad horizontal, manteniendo caída con gravedad
+            
+            rb.AddForce((movement - RbVelocityHorizontal()), ForceMode.VelocityChange);
             
         }
         else
-            rb.AddForce(new Vector3(rb.velocity.x, 0, rb.velocity.z) * -acceleration, ForceMode.Force);
+            rb.AddForce(RbVelocityHorizontal() * -deceleration, ForceMode.Force);
         
         transform.forward = Vector3.Slerp(transform.forward, camFwd, charT);
         
+        Debug.Log(rb.velocity.magnitude);
+        
     }
-
-    /*private void Movement()
-    {
-        Vector3 camFwd = cam.transform.forward;
-        camFwd.y = 0;
-
-        Vector2 input = _charMove.ReadValue<Vector2>();
-        
-        Vector3 movement = new Vector3(input.x, 0, input.y).normalized  * walkSpeed;
-        // Vector3 movement = new Vector3(input.x, 0, input.y) * walkSpeed;
-        
-        rb.velocity = movement;
-        // rb.velocity = movement * walkSpeed;
-        // rb.velocity = movement.normalized;
-        // rb.AddForce(movement * walkSpeed, ForceMode.Force);
-        
-    }*/
 
     private void CameraControl()
     {
@@ -290,7 +262,7 @@ public class PlayerController : MonoBehaviour
         
         // camAnchor.transform.position = camOffset + camTgt.transform.position;
         
-        _rotation += _look * camSensitivity;
+        _rotation += _look * camSensitivity * (playerIn.currentControlScheme == "Controller" ? camGamepadMult : 1); // aplica el multiplicador de sensibilidad de la cámara cuándo detecta que el esquema de entrada actual es un gamepad.
         _rotation.y = Mathf.Clamp(_rotation.y, lowerLimitV, upperLimitV);
         
         cam.transform.position = Vector3.Lerp(cam.transform.position, camAnchor.transform.position, 
@@ -299,9 +271,30 @@ public class PlayerController : MonoBehaviour
         camTgt.transform.eulerAngles = new Vector3(_rotation.y, _rotation.x, 0);
         
         cam.transform.LookAt(camTgt.transform.position);
-
-        // _rotation.y += 
+        
+        Debug.Log(playerIn.currentControlScheme);
 
     }
+    
+    #region UTILS
+    /// <summary>
+    /// Devuelve los componentes horizontales de la velocidad del rigidbody (x, 0, z).
+    /// </summary>
+    /// <returns></returns>
+    private Vector3 RbVelocityHorizontal()
+    {
+        return new Vector3(rb.velocity.x, 0, rb.velocity.z);
+    }
+
+    /// <summary>
+    /// Devuelve el componente vertical de la velocidad del rigidbody (0, y, 0).
+    /// </summary>
+    /// <returns></returns>
+    private Vector3 RbVelocityVertical()
+    {
+        return new Vector3(0, rb.velocity.y, 0);
+    }
+    
+    #endregion
 
 }

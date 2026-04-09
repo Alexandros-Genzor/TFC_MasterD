@@ -69,8 +69,8 @@ Packages/packages-lock.json linguist-generated
 # 3D models
 *.3dm                   lfs
 *.3ds                   lfs
-*.blend                 lfs
-*.blend1                lfs
+# *.blend                 lfs
+# *.blend1                lfs
 *.c4d                   lfs
 *.collada               lfs
 *.dae                   lfs
@@ -149,7 +149,7 @@ Packages/packages-lock.json linguist-generated
 *.exe                   lfs
 
 # Documents
-*.pdf                   lfs
+# *.pdf                   lfs
 
 # ETC
 *.a                     lfs

@@ -6,3 +6,6 @@ https://youtu.be/T0CYpOyCVIU
 
 - tutorial object movement types (con rigidbody)
 https://youtu.be/EMhTROG0nAw
+
+- tutorial diferenciar entre diferentes triggers / colliders en un gameobject
+https://youtu.be/xzg42EJ2BHA

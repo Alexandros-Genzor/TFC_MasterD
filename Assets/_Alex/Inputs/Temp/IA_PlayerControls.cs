@@ -115,7 +115,7 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
                     ""type"": ""PassThrough"",
                     ""id"": ""d61c5bf1-6693-45bd-8c76-b4f3beddb976"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
+                    ""processors"": ""InvertVector2(invertX=false)"",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 },
@@ -123,6 +123,15 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""355b8e6b-46c4-45c5-a342-52c7944abb64"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Knockback"",
+                    ""type"": ""Button"",
+                    ""id"": ""af341cb3-a67d-4fc3-884a-14d165106fed"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -289,7 +298,7 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""c14a046e-a019-4cf5-92c8-f6fe01326b8b"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""ScaleVector2"",
                     ""groups"": "";Controller"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
@@ -314,6 +323,17 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Controller"",
                     ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8d89b02-aa2a-44cb-9e06-4a07b9898034"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard;Keyboard (ALT)"",
+                    ""action"": ""Knockback"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -372,6 +392,7 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_Knockback = m_Player.FindAction("Knockback", throwIfNotFound: true);
     }
 
     ~@IA_PlayerControls()
@@ -456,6 +477,7 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_Knockback;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -483,6 +505,10 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Attack".
         /// </summary>
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Knockback".
+        /// </summary>
+        public InputAction @Knockback => m_Wrapper.m_Player_Knockback;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -521,6 +547,9 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @Knockback.started += instance.OnKnockback;
+            @Knockback.performed += instance.OnKnockback;
+            @Knockback.canceled += instance.OnKnockback;
         }
 
         /// <summary>
@@ -544,6 +573,9 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @Knockback.started -= instance.OnKnockback;
+            @Knockback.performed -= instance.OnKnockback;
+            @Knockback.canceled -= instance.OnKnockback;
         }
 
         /// <summary>
@@ -651,5 +683,12 @@ public partial class @IA_PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Knockback" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnKnockback(InputAction.CallbackContext context);
     }
 }
