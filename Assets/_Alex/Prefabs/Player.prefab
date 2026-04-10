@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5910218228670211949}
   - component: {fileID: 4683051457852408069}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 301001741804421513}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: -0.5, y: 0, z: 0.75}
   m_LocalScale: {x: 0.375, y: 0.25, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -524,6 +524,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 355b8e6b-46c4-45c5-a342-52c7944abb64
     m_ActionName: Player/Attack[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: af341cb3-a67d-4fc3-884a-14d165106fed
+    m_ActionName: Player/Knockback[/Keyboard/j]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard
   m_DefaultActionMap: Player
@@ -543,6 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   camSensitivity: 0.2
+  camGamepadMult: 3
   camOffset: {x: 0, y: 0, z: -3}
   camTgt: {fileID: 7623901070538075424}
   camAnchor: {fileID: 3728420002403464198}
@@ -550,17 +555,17 @@ MonoBehaviour:
   charT: 0.2
   lowerLimitV: -45
   upperLimitV: 60
-  playerIn: {fileID: 0}
   sword: {fileID: 301001741804421513}
-  rb: {fileID: 0}
+  playerIn: {fileID: 6451223027096285499}
+  rb: {fileID: 6057037635036427568}
   walkSpeed: 5
-  acceleration: 0
-  jumpForce: 3
+  deceleration: 2
+  jumpForce: 6
   minHealth: 0
   maxHealth: 100
   health: 0
   gotDmg: 0
-  dmg: -10
+  dmg: 10
 --- !u!54 &6057037635036427568
 Rigidbody:
   m_ObjectHideFlags: 0

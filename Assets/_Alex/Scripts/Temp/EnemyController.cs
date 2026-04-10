@@ -5,18 +5,21 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    private Rigidbody _rb;
+    [Header("GameObject Components")]
+    [SerializeField] private Rigidbody rb;
 
+    [Header("Movement")]
     public Transform targetPos;
     public bool doFollowTarget;
 
     public float speed = 1; // renombrar a acceleration
     // public float stopDistance;
     public float maxSpeed = 3;
-    
-    
-    
-    public float minHealth = 0, maxHealth = 100;
+
+
+    [Header("Health & Damage")] 
+    public float minHealth = 0;
+    public float maxHealth = 100;
     [SerializeField] private float health;
     public float Health {get => health; set => health = Mathf.Clamp(value, minHealth, maxHealth);}
     // temp
@@ -27,7 +30,7 @@ public class EnemyController : MonoBehaviour
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
+        // rb = GetComponent<Rigidbody>();
         
     }
 
@@ -49,7 +52,7 @@ public class EnemyController : MonoBehaviour
         if (health <= 0)
             gameObject.SetActive(false);
         
-        _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, maxSpeed);
+        rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxSpeed);
         
     }
 
@@ -62,7 +65,7 @@ public class EnemyController : MonoBehaviour
             
             // weird movement behaviour
             // _rb.AddRelativeForce(transform.forward * speed * Time.fixedDeltaTime, ForceMode.Force);
-            _rb.AddForce(transform.forward * speed, ForceMode.Force);
+            rb.AddForce(transform.forward * speed, ForceMode.Force);
             
             // Debug.Log(_rb.velocity.magnitude);
 
@@ -77,7 +80,7 @@ public class EnemyController : MonoBehaviour
             
         } 
         else
-            _rb.AddForce(_rb.velocity * -speed, ForceMode.Force);
+            rb.AddForce(rb.velocity * -speed, ForceMode.Force);
         
     }
 
@@ -91,14 +94,12 @@ public class EnemyController : MonoBehaviour
     /// <param name="isHealing">Define si "healthChange" es daño o curación (default: daño).</param>
     public void AlterHealth(float healthChange, bool isHealing = false)
     {
-        health += healthChange * (isHealing ? 1 : -1);
+        Health += healthChange * (isHealing ? 1 : -1);
         
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.tag);
-        
         if (other.gameObject.CompareTag("Player"))
         {
             // transform.LookAt(other.gameObject.transform.position);
@@ -133,10 +134,7 @@ public class EnemyController : MonoBehaviour
     {
         // reemplazar con eventos o mensajes
         if (other.gameObject.CompareTag("Player"))
-        {
             other.gameObject.GetComponent<PlayerController>().AlterHealth(dmg);
-            
-        }
         
     }
     

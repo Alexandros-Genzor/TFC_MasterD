@@ -286,12 +286,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4c27f63cdc8904b939dd8a235b08f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 7132619442853496859}
   targetPos: {fileID: 0}
   doFollowTarget: 0
-  speed: 6
+  speed: 10
   maxSpeed: 2
   minHealth: 0
   maxHealth: 100
   health: 0
   gotDmg: 0
-  dmg: -10
+  dmg: 10

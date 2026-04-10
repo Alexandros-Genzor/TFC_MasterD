@@ -10,64 +10,78 @@ public class PlayerController : MonoBehaviour
 {
     // exclusivo de jugador
     #region PLAYER_ONLY
+    [Header("Camera & Rotation")]
     public Camera cam;
     public float camSensitivity;
-    public float camGamepadMult = 3; // multiplicador de sensibilidad de la cámara con joystick
-    public Vector3 camOffset; // aplica un offset de distancia al ancla de la cámara respecto al eje (si se usa provoca que la cámara se atasque).
-
-    private Vector2 _rotation;
-
+    // multiplicador de sensibilidad de la cámara con joystick
+    public float camGamepadMult = 3;
+    // aplica un offset de distancia al ancla de la cámara respecto al eje (si se usa provoca que la cámara se atasque).
+    public Vector3 camOffset;
+    
     public GameObject camTgt;
     public GameObject camAnchor;
-        
+    
+    private Vector2 _rotation;
+    
+    // controla el trailing (velocidad del lerp) de la cámara respecto a su anchor.
     public float camT;
+    // controla el trailing (velocidad del lerp) del body respecto al forward de la cámara.
     public float charT;
     
+    // límite de depresión y elevación de la cámara.
     public float lowerLimitV, upperLimitV;
 
-    [SerializeField] private PlayerInput playerIn;
+    // DEPRECATED
+    // private InputAction _charMove;
+    // private InputAction _charJump;
+    // private InputAction _charLook;
 
-    private InputAction _charMove;
-    private InputAction _charJump;
-    private InputAction _charLook;
-
+    // almacena el valor de los controles de desplazamiento.
     private Vector3 _move;
+    // almacena el valor del control de movimiento de la cámara.
     private Vector2 _look;
 
+    [Header("-- TEMP --")]
     // temporal
     [SerializeField] private GameObject sword;
-    private bool isAttacking;
+    private bool _isAttacking;
+    
+    [Header("GameObject Components")]
+    [SerializeField] private PlayerInput playerIn;
     
     #endregion
-
+    
     // temporal en esta clase -> mover a clase padre para todos personajes
     [SerializeField] private Rigidbody rb;
     
+    [Header("Movement")]
     public float walkSpeed;
     public float deceleration;
     public float jumpForce = 10;
-    
-    public float minHealth = 0, maxHealth = 100;
+    [SerializeField] private bool isGrounded;
+
+    [Header("Health & Damage")] 
+    [SerializeField] private float minHealth = 0;
+    [SerializeField] private float maxHealth = 100;
     [SerializeField] private float health;
     public float Health {get => health; set => health = Mathf.Clamp(value, minHealth, maxHealth);}
     // temp
     public bool gotDmg = false;
     public float dmg = 10; // temporal
     
-    #region LIFECYCLE FUNC
-
+    #region LIFECYCLE FUNCTIONS
     // asignación de componentes (que no vayan a ser añadidos / eliminados en runtime) y que serán usados en código.
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        playerIn = GetComponent<PlayerInput>();
+        // rb = GetComponent<Rigidbody>(); // manualmente asignado en inspector
+        // playerIn = GetComponent<PlayerInput>(); // manualmente asignado en inspector
         
     }
 
     void Start()
     {
         // Inicializa la vida del personaje (no compatible con persistencia entre escenas).
-        health = maxHealth;
+        Health = maxHealth;
 
         // Automáticamente asigna la MainCamera de la escena si no se ha asignado una manualmente.
         if (cam == null)
@@ -77,8 +91,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Controls();
-        // Movement();
         CameraControl();
 
         // puede que sea redundante :/
@@ -139,9 +151,13 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && isGrounded)
+        {
             rb.AddForce(0, /*Vector3.up * */jumpForce, 0, ForceMode.Impulse);
             // rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
+
+        }
         
     }
 
@@ -166,16 +182,14 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.started)
-        {
-            // para evitar cualquier posible overlap
-            if (isAttacking)
-                StopCoroutine(nameof(IAttack));
-
-            StartCoroutine(nameof(IAttack));
-
-        }
+        if (!context.started) return;
         
+        // para evitar cualquier posible overlap
+        if (_isAttacking)
+            StopCoroutine(nameof(IAttack));
+
+        StartCoroutine(nameof(IAttack));
+
     }
 
     public void OnTestKnockback(InputAction.CallbackContext context)
@@ -189,13 +203,11 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator IAttack()
     {
-        Debug.Log("STARTED");
-        
         sword.SetActive(true);
-        isAttacking = true;
+        _isAttacking = true;
         yield return new WaitForSeconds(2);
         sword.SetActive(false);
-        isAttacking = false;
+        _isAttacking = false;
 
     }
 
@@ -207,11 +219,11 @@ public class PlayerController : MonoBehaviour
     /// <param name="isHealing">Define si "healthChange" es daño o curación (default: daño).</param>
     public void AlterHealth(float healthChange, bool isHealing = false)
     {
-        health += healthChange * (isHealing ? 1 : -1);
+        Health += healthChange * (isHealing ? 1 : -1);
         
     }
     
-    // sistema de movimiento mediante transform / sin uso de rigidbody ni físicas
+    // sistema de movimiento mediante transform / sin uso de rigidbody ni físicas -- DEPRECATED debido al uso de sistema de movimiento mediante RigidBody.
     /*public void Movement()
     {
         Vector3 camFwd = cam.transform.forward;
@@ -238,7 +250,7 @@ public class PlayerController : MonoBehaviour
         
         // rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z); // controla el movimiento del personaje atacando directamente a la velocidad del rigidbody
         
-        // controla el movimiento del personaje a base de ejercer una aceleración en la direccion del personaje (+ clamp de velocidad)
+        // controla el movimiento del personaje a base de ejercer una aceleración en la direccion del personaje (+ clamp de velocidad) -> reemplazado temporalmente por ForceMode.VelocityChange.
         if (_move != Vector3.zero)
         {
             // rb.AddForce(movement * acceleration, ForceMode.Force);
@@ -258,11 +270,11 @@ public class PlayerController : MonoBehaviour
 
     private void CameraControl()
     {
-        // Debug.Log(_look);
-        
         // camAnchor.transform.position = camOffset + camTgt.transform.position;
         
-        _rotation += _look * camSensitivity * (playerIn.currentControlScheme == "Controller" ? camGamepadMult : 1); // aplica el multiplicador de sensibilidad de la cámara cuándo detecta que el esquema de entrada actual es un gamepad.
+        // aplica el multiplicador de sensibilidad de la cámara cuándo detecta que el esquema de entrada actual es un gamepad.
+        _rotation += _look * (camSensitivity * (playerIn.currentControlScheme == "Controller" ? camGamepadMult : 1));
+        // limita el ángulo de elevación / depresión de la cámara (eliminar cuándo se use cámara de cinemachine con springarm).
         _rotation.y = Mathf.Clamp(_rotation.y, lowerLimitV, upperLimitV);
         
         cam.transform.position = Vector3.Lerp(cam.transform.position, camAnchor.transform.position, 
@@ -276,9 +288,10 @@ public class PlayerController : MonoBehaviour
 
     }
     
+    // mover toda región a clase padre
     #region UTILS
     /// <summary>
-    /// Devuelve los componentes horizontales de la velocidad del rigidbody (x, 0, z).
+    /// Devuelve los componentes horizontales de la velocidad del rigidbody (X, 0, Z).
     /// </summary>
     /// <returns></returns>
     private Vector3 RbVelocityHorizontal()
@@ -287,7 +300,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Devuelve el componente vertical de la velocidad del rigidbody (0, y, 0).
+    /// Devuelve el componente vertical de la velocidad del rigidbody (0, Y, 0).
     /// </summary>
     /// <returns></returns>
     private Vector3 RbVelocityVertical()
@@ -295,6 +308,17 @@ public class PlayerController : MonoBehaviour
         return new Vector3(0, rb.velocity.y, 0);
     }
     
+    #endregion
+    
+    #region TRIGGERS & COLLIDERS
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+            isGrounded = true;
+
+    }
+
     #endregion
 
 }

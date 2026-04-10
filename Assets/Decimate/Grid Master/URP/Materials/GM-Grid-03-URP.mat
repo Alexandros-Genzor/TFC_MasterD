@@ -121,6 +121,7 @@ Material:
     - _Emission: 0
     - _Emission_Map_Multiplier: 1
     - _Emission_Tiling: 1
+    - _Invert_Texture: 0
     - _Metallic: 0
     - _Metallic_Map_Multiplier: 1
     - _Metallic_Tiling: 1
