@@ -155,7 +155,6 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(0, /*Vector3.up * */jumpForce, 0, ForceMode.Impulse);
             // rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false;
 
         }
         
@@ -260,7 +259,8 @@ public class PlayerController : MonoBehaviour
             
         }
         else
-            rb.AddForce(RbVelocityHorizontal() * -deceleration, ForceMode.Force);
+            if (isGrounded)
+                rb.AddForce(RbVelocityHorizontal() * -deceleration, ForceMode.Force);
         
         transform.forward = Vector3.Slerp(transform.forward, camFwd, charT);
         
@@ -311,7 +311,7 @@ public class PlayerController : MonoBehaviour
     #endregion
     
     #region TRIGGERS & COLLIDERS
-
+    // posibilidad de reemplazar con raycast (agnóstico a tipo de tag o layermask).
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
@@ -319,6 +319,13 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+            isGrounded = false;
+        
+    }
+    
     #endregion
 
 }

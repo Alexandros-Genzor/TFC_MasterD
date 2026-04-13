@@ -1,11 +1,17 @@
 - tutorial input system full
 https://youtu.be/ZSP3bFaZm-o
 
+- tutorial input system full 2
+https://youtu.be/z5zShkCR0mg
+
 - tutorial shader grid procedural
 https://youtu.be/T0CYpOyCVIU
 
 - tutorial object movement types (con rigidbody)
 https://youtu.be/EMhTROG0nAw
 
-- tutorial diferenciar entre diferentes triggers / colliders en un gameobject
+- tutorial diferenciar entre diferentes triggers / colliders en un GameObject
 https://youtu.be/xzg42EJ2BHA
+
+- tutorial ground check con collision y raycast
+https://youtu.be/P_6W-36QfLA
