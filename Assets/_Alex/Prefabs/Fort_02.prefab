@@ -1425,7 +1425,7 @@ GameObject:
   - component: {fileID: 4096145068736998424}
   m_Layer: 0
   m_Name: Ramp (7)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

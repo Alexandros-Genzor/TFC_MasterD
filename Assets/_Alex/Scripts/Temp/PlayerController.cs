@@ -264,8 +264,6 @@ public class PlayerController : MonoBehaviour
         
         transform.forward = Vector3.Slerp(transform.forward, camFwd, charT);
         
-        Debug.Log(rb.velocity.magnitude);
-        
     }
 
     private void CameraControl()

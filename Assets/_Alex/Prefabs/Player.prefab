@@ -360,7 +360,7 @@ Transform:
   m_GameObject: {fileID: 3728420002403464198}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.5, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -561,6 +561,7 @@ MonoBehaviour:
   walkSpeed: 5
   deceleration: 2
   jumpForce: 6
+  isGrounded: 0
   minHealth: 0
   maxHealth: 100
   health: 0

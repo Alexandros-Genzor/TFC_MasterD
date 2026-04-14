@@ -115,7 +115,7 @@ public class EnemyController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            transform.LookAt(new Vector3(other.transform.position.x, 0, other.transform.position.z));
+            transform.LookAt(new Vector3(other.transform.position.x, transform.position.y, other.transform.position.z)); // transform.position.y para que siempre mire hacia el horizonte (y no hacia arriba o abajo).
 
             targetPos = other.transform;
 
