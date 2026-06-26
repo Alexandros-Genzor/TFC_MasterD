@@ -27,7 +27,7 @@ public class SimpleSwordScript : MonoBehaviour
     {
         if (other.CompareTag(tagTgt))
         {
-            other.gameObject.GetComponent<EnemyController>().AlterHealth(dmg);
+            other.gameObject.GetComponentInParent<EnemyController>().AlterHealth(dmg);
             gameObject.SetActive(false);
             
         }
