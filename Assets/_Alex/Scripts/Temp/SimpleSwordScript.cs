@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Alex.Scripts;
 using UnityEngine;
 
 public class SimpleSwordScript : MonoBehaviour
@@ -27,7 +28,7 @@ public class SimpleSwordScript : MonoBehaviour
     {
         if (other.CompareTag(tagTgt))
         {
-            other.gameObject.GetComponentInParent<EnemyController>().AlterHealth(dmg);
+            other.gameObject.GetComponentInParent<HealthManager>().AlterHealth(dmg);
             gameObject.SetActive(false);
             
         }

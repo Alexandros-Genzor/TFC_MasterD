@@ -204,8 +204,10 @@ GameObject:
   - component: {fileID: 7132619442853496859}
   - component: {fileID: 7313759722264571411}
   - component: {fileID: 2876518676064318339}
+  - component: {fileID: 4179352654676421891}
+  - component: {fileID: 8775816503754683626}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: EnemyV2
   m_TagString: TempEnemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -261,16 +263,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3988489417355530172}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe4c27f63cdc8904b939dd8a235b08f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 7132619442853496859}
   targetPos: {fileID: 0}
-  doFollowTarget: 0
-  speed: 10
+  doFollowTgt: 0
+  speed: 2
   maxSpeed: 2
+  deceleration: 15
   minHealth: 0
   maxHealth: 100
   health: 0
@@ -297,6 +300,39 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 5
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &4179352654676421891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3988489417355530172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 547d0f8631a5f9d43901f52aed9ad11a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minHealth: 0
+  maxHealth: 100
+  health: 0
+--- !u!114 &8775816503754683626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3988489417355530172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1d001e29ea8be4683246d24419aaa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementMngr:
+    speed: 2
+    deceleration: 15
+  doFollowTgt: 0
+  rb: {fileID: 0}
+  healthMngr: {fileID: 0}
 --- !u!1 &4762623274320900073
 GameObject:
   m_ObjectHideFlags: 0
