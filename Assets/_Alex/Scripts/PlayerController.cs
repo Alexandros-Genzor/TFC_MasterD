@@ -23,6 +23,7 @@ namespace _Alex.Scripts
         [Header("GameObject Components")]
         [SerializeField] private PlayerInput playerIn;
         [SerializeField] private PlayerCameraManager playerCam;
+        [SerializeField] private RaycastGroundCheck raycastCheck;
         // [SerializeField] private HealthManager healthMngr;
     
         #region LIFECYCLE FUNC
@@ -34,6 +35,7 @@ namespace _Alex.Scripts
             
             playerIn = GetComponent<PlayerInput>();
             playerCam = GetComponent<PlayerCameraManager>();
+            raycastCheck = GetComponent<RaycastGroundCheck>();
             
         }
 
@@ -111,7 +113,8 @@ namespace _Alex.Scripts
         /// </summary>
         public void OnJump(InputAction.CallbackContext context)
         {
-            if (context.started && MovementMngr.isGrounded)
+            // if (context.started && MovementMngr.isGrounded)
+            if (context.started && raycastCheck.IsGrounded())
             {
                 rb.AddForce(0, /*Vector3.up * */MovementMngr.jumpForce, 0, ForceMode.Impulse);
                 // rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
@@ -190,7 +193,8 @@ namespace _Alex.Scripts
                 
             }
             else
-                if (MovementMngr.isGrounded)
+                // if (MovementMngr.isGrounded)
+                if (raycastCheck.IsGrounded())
                     rb.AddForce(MovementMngr.RbVelocityHorizontal(rb.velocity) * -MovementMngr.deceleration, 
                         ForceMode.Force);
             

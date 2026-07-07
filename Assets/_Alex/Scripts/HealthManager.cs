@@ -8,6 +8,7 @@ namespace _Alex.Scripts
         [SerializeField] private float maxHealth = 100;
         [SerializeField] private float health;
         public float Health {get => health; set => health = Mathf.Clamp(value, minHealth, maxHealth);}
+        public float MaxHealth {get => maxHealth;}
     
         #region LIFECYCLE FUNC
         void Start()
