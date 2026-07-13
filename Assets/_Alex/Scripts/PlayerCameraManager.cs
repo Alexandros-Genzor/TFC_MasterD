@@ -1,4 +1,5 @@
 using System;
+using Cinemachine;
 using UnityEngine;
 
 namespace _Alex.Scripts
@@ -7,6 +8,7 @@ namespace _Alex.Scripts
     {
         [Header("Camera & Rotation")]
         public Camera cam;
+        public CinemachineVirtualCamera vcam;
         public float camSensitivity;
         // multiplicador de sensibilidad de la cámara con joystick
         public float camGamepadMult = 3;
@@ -19,7 +21,7 @@ namespace _Alex.Scripts
         private Vector2 _rotation;
     
         // controla el trailing (velocidad del lerp) de la cámara respecto a su anchor.
-        public float camT;
+        [Obsolete] public float camT;
         // controla el trailing (velocidad del lerp) del body respecto al forward de la cámara.
         public float charT;
     
