@@ -1,38 +1,71 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using _Alex.Scripts;
 using UnityEngine;
 
-public class SimpleSwordScript : MonoBehaviour
+namespace _Alex.Scripts.Temp
 {
-    [SerializeField] private string tagTgt;
-    [SerializeField] private float dmg = 10;
-    
-    #region LIFECYCLE FUNC
-    void Start()
+    public class SimpleSwordScript : MonoBehaviour
     {
-        
-        
-    }
+        [SerializeField] private string tagTgt;
+        [SerializeField] private float dmg = 10;
 
-    void Update()
-    {
-        
-        
-    }
+        [SerializeField] private TriggerController swordTrigger;
     
-    #endregion
+        #region LIFECYCLE FUNC
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag(tagTgt))
+        private void Awake()
         {
-            other.gameObject.GetComponentInParent<HealthManager>().AlterHealth(dmg);
-            gameObject.SetActive(false);
+        
+        
+        }
+
+        void Start()
+        {
+        
+        
+        }
+
+        void Update()
+        {
+        
+        
+        }
+
+        private void OnEnable()
+        {
+            swordTrigger.TriggerIn += OnHit;
+
+        }
+
+        private void OnDisable()
+        {
+            swordTrigger.TriggerIn -= OnHit;
             
         }
+
+        #endregion
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag(tagTgt))
+            {
+                other.gameObject.GetComponentInParent<HealthManager>().AlterHealth(dmg);
+                gameObject.SetActive(false);
+            
+            }
         
+        }
+        
+        private void OnHit(Collider other)
+        {
+            if (other.CompareTag(tagTgt))
+            {
+                other.gameObject.GetComponentInParent<HealthManager>().AlterHealth(dmg);
+                gameObject.SetActive(false);
+            
+            }
+        
+        }
+    
     }
     
 }

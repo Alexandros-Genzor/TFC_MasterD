@@ -17,7 +17,9 @@ namespace _Alex.Scripts
 
         [Header("-- TEMP --")]
         // temporal
-        [SerializeField] private GameObject sword;
+        [SerializeField] internal GameObject sword;
+        [SerializeField] private GameObject hand;
+        internal Transform Hand => hand.transform;
         private bool _isAttacking;
     
         [Header("GameObject Components")]
@@ -100,9 +102,14 @@ namespace _Alex.Scripts
                     break;
             
                 case "Attack":
-                OnAttack(context);
+                    OnAttack(context);
                 
-                break;
+                    break;
+                
+                case "Drop Weapon":
+                    OnDropWeapon(context);
+                    
+                    break;
             
             }
         
@@ -144,13 +151,24 @@ namespace _Alex.Scripts
 
         public void OnAttack(InputAction.CallbackContext context)
         {
-            if (!context.started) return;
+            if (!context.started || sword == null) return;
             
             // para evitar cualquier posible overlap
             if (_isAttacking)
                 StopCoroutine(nameof(IAttack));
 
             StartCoroutine(nameof(IAttack));
+
+        }
+
+        public void OnDropWeapon(InputAction.CallbackContext context)
+        {
+            if (!context.started || sword == null) return;
+            
+            var pickup = sword.GetComponent<PickupManager>();
+            pickup.gameObject.SetActive(true);
+            pickup.DropWeapon(transform.position.y);
+            sword = null;
 
         }
 
@@ -204,6 +222,12 @@ namespace _Alex.Scripts
             // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement.normalized), charT);
             // transform.rotation = Quaternion.LookRotation(movement);
         
+        }
+
+        public void PickUpWeapon(PickupManager pickManager)
+        {
+            
+            
         }
         
         #region TRIGGERS & COLLIDERS
