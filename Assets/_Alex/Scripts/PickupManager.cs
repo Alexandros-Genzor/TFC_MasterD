@@ -21,13 +21,11 @@ namespace _Alex.Scripts
             weaponScript = GetComponent<SimpleSwordScript>();
             trigger = pickupTrigger.GetComponent<TriggerController>();
             
-            EnableEvents();
-            
         }
 
         void Start()
         {
-        
+            EnableEvents();
         
         }
 
@@ -57,8 +55,10 @@ namespace _Alex.Scripts
 
             if (other.CompareTag("Player"))
             {
-                DisableEvents();
                 var player = other.transform.parent.GetComponent<PlayerController>();
+                if (player.sword != null) return; // comprueba si el jugador tiene un arma "equipada", y en caso de ser así evita que este arma sea recolectada
+                
+                DisableEvents();
 
                 player.sword = this.gameObject;
                 
@@ -71,7 +71,6 @@ namespace _Alex.Scripts
                 
                 gameObject.SetActive(false);
                 
-
             }
             
         }
@@ -94,12 +93,11 @@ namespace _Alex.Scripts
 
             weaponScript.enabled = false;
 
-            transform.position = new Vector3(transform.position.x, playerY, transform.position.z);
+            transform.position = new Vector3(transform.position.x, playerY, transform.position.z); // planes para reemplazar la asignación de la Y por habilitar físicas de rigidbody.
             transform.rotation = Quaternion.identity;
             
             EnableEvents();
             
-
         }
 
         private void EnableEvents()
